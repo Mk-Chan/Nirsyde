@@ -1,7 +1,7 @@
 [package]
 name = "nirsyde"
 version = "0.1.0"
-authors = ["manik"]
+authors = ["Manik Charan <mkchan2951@gmail.com>"]
 edition = "2018"
 
 [dependencies]
