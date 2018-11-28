@@ -1,0 +1,7 @@
+[package]
+name = "nirsyde"
+version = "0.1.0"
+authors = ["manik"]
+edition = "2018"
+
+[dependencies]
