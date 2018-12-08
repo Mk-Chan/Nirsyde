@@ -1,7 +1,5 @@
 use crate::utils::Printable;
 
-pub type Bitboard = u64;
-
 #[derive(Copy, Clone)]
 #[allow(dead_code)]
 pub enum Square {
@@ -15,6 +13,10 @@ pub enum Square {
     A8, B8, C8, D8, E8, F8, G8, H8,
 }
 
+// TODO: Move each type into its own respective module
+// TODO: Implement index fn for Square which returns the mapping: A1 -> 0 ... H8 -> 63.
+// TODO: Implement iterators over each file and rank from starting square reverse and forward (?!)
+
 #[derive(Copy, Clone)]
 #[allow(dead_code)]
 pub enum PieceType {
@@ -25,6 +27,30 @@ pub enum PieceType {
 #[allow(dead_code)]
 pub enum Color {
     White, Black
+}
+
+impl PieceType {
+    pub fn parse(ch: char) -> PieceType {
+        match ch {
+            'p' => PieceType::Pawn,
+            'n' => PieceType::Knight,
+            'b' => PieceType::Bishop,
+            'r' => PieceType::Rook,
+            'q' => PieceType::Queen,
+            'k' => PieceType::King,
+        }
+    }
+
+    pub fn index(&self) -> i8 {
+        match *self {
+            PieceType::Pawn => 0,
+            PieceType::Knight => 1,
+            PieceType::Bishop => 2,
+            PieceType::Rook => 3,
+            PieceType::Queen => 4,
+            PieceType::King => 5,
+        }
+    }
 }
 
 impl Printable for Square {
