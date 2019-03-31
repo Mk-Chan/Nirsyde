@@ -1,11 +1,16 @@
-mod types;
-mod utils;
-mod castling;
-mod position;
-mod bitboard;
+#![allow(dead_code)]
 
-use crate::utils::Printable;
+use crate::constants::*;
+use crate::position::Position;
+
+mod position;
+mod types;
+mod constants;
+mod type_trait_impls;
+mod type_traits;
+mod type_operator_overloads;
 
 fn main() {
-    let pos = position::Position::new("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" );
+    let pos = Position::from(INITIAL_FEN);
+    pos.print_parts();
 }
