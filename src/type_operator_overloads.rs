@@ -1,17 +1,17 @@
 use std::ops;
-use crate::types::{Bitboard, Square, CastlingRight};
+use crate::types::{Bitboard, Square, CastlingRights};
 use crate::types::FenStage::CastlingRights;
 
-impl ops::BitXor<CastlingRight> for CastlingRight {
-    type Output = CastlingRight;
+impl ops::BitXor<CastlingRights> for CastlingRights {
+    type Output = CastlingRights;
 
-    fn bitxor(self, rhs: CastlingRight) -> Self::Output {
-        CastlingRight(self.0 ^ rhs.0)
+    fn bitxor(self, rhs: CastlingRights) -> Self::Output {
+        CastlingRights(self.0 ^ rhs.0)
     }
 }
 
-impl ops::BitXorAssign<CastlingRight> for CastlingRight {
-    fn bitxor_assign(&mut self, rhs: CastlingRight) {
+impl ops::BitXorAssign<CastlingRights> for CastlingRights {
+    fn bitxor_assign(&mut self, rhs: CastlingRights) {
         self.0 ^= rhs.0;
     }
 }

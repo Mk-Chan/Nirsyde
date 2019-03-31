@@ -1,4 +1,4 @@
-use crate::types::{CastlingRight, Color, File, PieceType, Rank, Square, FenStage};
+use crate::types::{CastlingRights, Color, File, PieceType, Rank, Square, FenStage};
 
 // Starting Position FEN
 pub const INITIAL_FEN: &str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -75,11 +75,11 @@ pub const PIECE_TYPES: [PieceType; 6] = [PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING
 
 
 // Castling rights
-pub const CASTLING_RIGHT_NONE: CastlingRight = CastlingRight(0);
-pub const WHITE_KING_SIDE: CastlingRight = CastlingRight(1);
-pub const WHITE_QUEEN_SIDE: CastlingRight = CastlingRight(2);
-pub const BLACK_KING_SIDE: CastlingRight = CastlingRight(4);
-pub const BLACK_QUEEN_SIDE: CastlingRight = CastlingRight(8);
+pub const CASTLING_RIGHT_NONE: CastlingRights = CastlingRights(0);
+pub const WHITE_KING_SIDE: CastlingRights = CastlingRights(1);
+pub const WHITE_QUEEN_SIDE: CastlingRights = CastlingRights(2);
+pub const BLACK_KING_SIDE: CastlingRights = CastlingRights(4);
+pub const BLACK_QUEEN_SIDE: CastlingRights = CastlingRights(8);
 
 
 // FEN Stages

@@ -1,12 +1,12 @@
 use crate::constants::*;
 use crate::type_traits::Printable;
-use crate::types::{Bitboard, CastlingRight, Color, ColoredPiece, FenStage, Square};
+use crate::types::{Bitboard, CastlingRights, Color, ColoredPiece, FenStage, Square};
 
 pub struct Position {
     piece_types: [Bitboard; 6],
     colors: [Bitboard; 2],
     enpassant_sq: Square,
-    castling_rights: CastlingRight,
+    castling_rights: CastlingRights,
     side_to_move: Color,
     halfmoves: u8,
     fullmoves: u32,
@@ -46,7 +46,7 @@ impl From<&String> for Position {
                 position.side_to_move = Color::from(&ch);
             } else if *stage == FenStage::CastlingRights {
                 for ch in fen_part.chars() {
-                    position.castling_rights ^= CastlingRight::from(&ch);
+                    position.castling_rights ^= CastlingRights::from(&ch);
                 }
             } else if *stage == FenStage::EnpassantSquare {
                 position.enpassant_sq = Square::from(fen_part);

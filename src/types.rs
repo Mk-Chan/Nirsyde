@@ -19,7 +19,7 @@ pub struct Color(pub u8);
 pub struct ColoredPiece(pub PieceType, pub Color);
 
 #[derive(Eq, PartialEq, Copy, Clone)]
-pub struct CastlingRight(pub u8);
+pub struct CastlingRights(pub u8);
 
 #[derive(Eq, PartialEq, Copy, Clone)]
 pub struct Bitboard(pub u64);
@@ -64,8 +64,8 @@ impl Square {
     }
 }
 
-impl CastlingRight {
-    pub fn allows(&self, cr: CastlingRight) -> bool {
+impl CastlingRights {
+    pub fn allows(&self, cr: CastlingRights) -> bool {
         self.0 & cr.0 != 0
     }
 }

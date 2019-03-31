@@ -1,8 +1,8 @@
 use crate::constants::*;
 use crate::type_traits::Printable;
-use crate::types::{Bitboard, CastlingRight, Color, ColoredPiece, File, PieceType, Rank, Square};
+use crate::types::{Bitboard, CastlingRights, Color, ColoredPiece, File, PieceType, Rank, Square};
 
-impl From<&char> for CastlingRight {
+impl From<&char> for CastlingRights {
     fn from(c: &char) -> Self {
         match *c {
             'k' => BLACK_KING_SIDE,
@@ -15,8 +15,8 @@ impl From<&char> for CastlingRight {
     }
 }
 
-impl From<&CastlingRight> for char {
-    fn from(c: &CastlingRight) -> Self {
+impl From<&CastlingRights> for char {
+    fn from(c: &CastlingRights) -> Self {
         match *c {
             BLACK_KING_SIDE => 'k',
             BLACK_QUEEN_SIDE => 'q',
@@ -181,7 +181,7 @@ impl From<&Square> for String {
     }
 }
 
-impl Printable for CastlingRight {
+impl Printable for CastlingRights {
     fn print(&self) {
         let mut no_castling = true;
         if self.allows(BLACK_KING_SIDE) {
