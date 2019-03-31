@@ -1,6 +1,5 @@
 use std::ops;
 use crate::types::{Bitboard, Square, CastlingRights};
-use crate::types::FenStage::CastlingRights;
 
 impl ops::BitXor<CastlingRights> for CastlingRights {
     type Output = CastlingRights;

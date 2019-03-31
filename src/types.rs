@@ -1,5 +1,3 @@
-use crate::constants::{WHITE, BLACK};
-
 #[derive(Eq, PartialEq, Copy, Clone)]
 pub struct Rank(pub u8);
 
