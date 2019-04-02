@@ -2,6 +2,7 @@ use crate::constants::*;
 use crate::type_traits::Printable;
 use crate::types::{Bitboard, CastlingRights, Color, ColoredPiece, FenStage, Square};
 
+#[derive(Copy, Clone)]
 pub struct Position {
     piece_types: [Bitboard; 6],
     colors: [Bitboard; 2],
@@ -86,6 +87,12 @@ impl Position {
         }
 
         self.colors.swap(WHITE.0 as usize, BLACK.0 as usize);
+    }
+
+    pub fn flipped(&self) -> Position {
+        let mut pos_copy = (*self).clone();
+        pos_copy.flip();
+        pos_copy
     }
 
     pub fn print_parts(&self) {

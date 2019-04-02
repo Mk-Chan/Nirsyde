@@ -19,4 +19,5 @@ fn main() {
     Move::capture(A1, A8, CAP_PAWN).to_square().print();
     Move::promotion_capture(A1, A8, PROM_ROOK, CAP_QUEEN).promotion_type().print();
     Move::promotion_capture(B8, A8, PROM_ROOK, CAP_QUEEN).capture_type().print();
+    pos.flipped().print_parts();
 }
