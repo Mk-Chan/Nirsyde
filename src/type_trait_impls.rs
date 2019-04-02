@@ -1,6 +1,6 @@
 use crate::constants::*;
 use crate::type_traits::Printable;
-use crate::types::{Bitboard, CastlingRights, Color, ColoredPiece, File, PieceType, Rank, Square};
+use crate::types::{Bitboard, CastlingRights, Color, ColoredPiece, File, PieceType, Rank, Square, Move};
 
 impl From<&char> for CastlingRights {
     fn from(c: &char) -> Self {
