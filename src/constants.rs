@@ -61,6 +61,8 @@ pub const SQUARES: [Square; 64] = [
 // Colors
 pub const WHITE: Color = Color(0);
 pub const BLACK: Color = Color(1);
+pub const US: Color = Color(0);
+pub const THEM: Color = Color(1);
 pub const COLORS: [Color; 2] = [WHITE, BLACK];
 
 
@@ -72,6 +74,7 @@ pub const ROOK: PieceType = PieceType(3);
 pub const QUEEN: PieceType = PieceType(4);
 pub const KING: PieceType = PieceType(5);
 pub const PIECE_TYPES: [PieceType; 6] = [PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING];
+pub const PIECE_NONE: PieceType = PieceType(6);
 
 
 // Castling rights
@@ -84,20 +87,20 @@ pub const BLACK_QUEEN_SIDE: CastlingRights = CastlingRights(8);
 
 // Move types
 pub const MOVE_NORMAL: u32 = 1 << 12;
-pub const MOVE_CASTLING: u32 = 1 << 13;
-pub const MOVE_ENPASSANT: u32 = 1 << 14;
-pub const MOVE_PROMOTION: u32 = 1 << 15;
-pub const MOVE_DOUBLE_PUSH: u32 = 1 << 16;
-pub const MOVE_CAPTURE: u32 = 1 << 17;
-pub const MOVE_PROM_CAP: u32 = MOVE_CAPTURE | MOVE_PROMOTION;
-pub const MOVE_MASK_CAPTURE: u32 = MOVE_CAPTURE | MOVE_ENPASSANT;
+pub const MOVE_CAPTURE: u32 = 1 << 13;
+pub const MOVE_DOUBLE_PUSH: u32 = 1 << 14;
+pub const MOVE_ENPASSANT: u32 = 1 << 15;
+pub const MOVE_CASTLING: u32 = 1 << 16;
+pub const MOVE_PROM_CAP: u32 = 1 << 17;
+pub const MOVE_PROMOTION: u32 = 1 << 18;
+pub const MOVE_MASK_CAPTURE: u32 = MOVE_CAPTURE | MOVE_ENPASSANT | MOVE_PROM_CAP;
 pub const MOVE_MASK_ALL: u32 = MOVE_NORMAL | MOVE_CASTLING | MOVE_ENPASSANT
-    | MOVE_PROMOTION | MOVE_DOUBLE_PUSH | MOVE_CAPTURE;
+    | MOVE_PROMOTION | MOVE_DOUBLE_PUSH | MOVE_CAPTURE | MOVE_PROM_CAP;
 
 
 // Promotion types
 pub const PROM_NONE: u32 = 0;
-pub const PROM_SHIFT: u32 = 18;
+pub const PROM_SHIFT: u32 = 19;
 pub const PROM_KNIGHT: u32 = ((KNIGHT.0 as u32) << PROM_SHIFT) as u32;
 pub const PROM_BISHOP: u32 = ((BISHOP.0 as u32) << PROM_SHIFT) as u32;
 pub const PROM_ROOK: u32 = ((ROOK.0 as u32) << PROM_SHIFT) as u32;
@@ -105,7 +108,7 @@ pub const PROM_QUEEN: u32 = ((QUEEN.0 as u32) << PROM_SHIFT) as u32;
 
 
 // Capture types - only useful if MOVE_CAPTURE bit is set
-pub const CAP_SHIFT: u32 = 21;
+pub const CAP_SHIFT: u32 = 22;
 pub const CAP_PAWN: u32 = ((PAWN.0 as u32) << CAP_SHIFT) as u32;
 pub const CAP_KNIGHT: u32 = ((KNIGHT.0 as u32) << CAP_SHIFT) as u32;
 pub const CAP_BISHOP: u32 = ((BISHOP.0 as u32) << CAP_SHIFT) as u32;
@@ -122,4 +125,15 @@ pub const FEN_STAGES: [FenStage; 7] = [
     FenStage::HalfMoves,
     FenStage::FullMoves,
     FenStage::Done,
+];
+
+pub const CASTLING_SPOILERS: [u8; 64] = [
+    13, 15, 15, 15, 12, 15, 15, 14,
+    15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 15,
+     7, 15, 15, 15,  3, 15, 15, 11
 ];

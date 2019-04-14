@@ -1,6 +1,18 @@
 use crate::constants::*;
 use crate::type_traits::Printable;
-use crate::types::{Bitboard, CastlingRights, Color, ColoredPiece, File, PieceType, Rank, Square, Move};
+use crate::types::{Bitboard, CastlingRights, Color, ColoredPiece, File, PieceType, Rank, Square};
+
+impl From<&u8> for Bitboard {
+    fn from(sq: &u8) -> Self {
+        Bitboard((1 as u64) << sq)
+    }
+}
+
+impl From<&Square> for Bitboard {
+    fn from(sq: &Square) -> Self {
+        Bitboard((1 as u64) << sq.0)
+    }
+}
 
 impl From<&char> for CastlingRights {
     fn from(c: &char) -> Self {
@@ -164,7 +176,7 @@ impl From<&String> for Square {
             let mut s = s.chars();
             let file = File(s.next().unwrap() as u8 - 'a' as u8);
             let rank = Rank(s.next().unwrap() as u8 - '1' as u8);
-            Square::new(file, rank)
+            Square::new(&file, &rank)
         }
     }
 }
@@ -184,20 +196,20 @@ impl From<&Square> for String {
 impl Printable for CastlingRights {
     fn print(&self) {
         let mut no_castling = true;
-        if self.allows(BLACK_KING_SIDE) {
-            print!("{}", char::from(&BLACK_KING_SIDE));
-            no_castling = false;
-        }
-        if self.allows(BLACK_QUEEN_SIDE) {
-            print!("{}", char::from(&BLACK_QUEEN_SIDE));
-            no_castling = false;
-        }
         if self.allows(WHITE_KING_SIDE) {
             print!("{}", char::from(&WHITE_KING_SIDE));
             no_castling = false;
         }
         if self.allows(WHITE_QUEEN_SIDE) {
             print!("{}", char::from(&WHITE_QUEEN_SIDE));
+            no_castling = false;
+        }
+        if self.allows(BLACK_KING_SIDE) {
+            print!("{}", char::from(&BLACK_KING_SIDE));
+            no_castling = false;
+        }
+        if self.allows(BLACK_QUEEN_SIDE) {
+            print!("{}", char::from(&BLACK_QUEEN_SIDE));
             no_castling = false;
         }
         if no_castling {

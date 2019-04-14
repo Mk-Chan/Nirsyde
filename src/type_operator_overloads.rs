@@ -1,5 +1,5 @@
 use std::ops;
-use crate::types::{Bitboard, Square, CastlingRights};
+use crate::types::{Bitboard, Square, CastlingRights, Color};
 
 impl ops::BitXor<CastlingRights> for CastlingRights {
     type Output = CastlingRights;
@@ -33,7 +33,7 @@ impl ops::Sub<Square> for Square {
     type Output = Square;
 
     fn sub(self, rhs: Square) -> Self::Output {
-        Square(self.0 + rhs.0)
+        Square(self.0 - rhs.0)
     }
 }
 
@@ -82,5 +82,13 @@ impl ops::BitXor<Bitboard> for Bitboard {
 impl ops::BitXorAssign<Bitboard> for Bitboard {
     fn bitxor_assign(&mut self, rhs: Bitboard) {
         self.0 ^= rhs.0;
+    }
+}
+
+impl ops::Not for Color {
+    type Output = Color;
+
+    fn not(self) -> Self::Output {
+        Color(self.0 ^ 1)
     }
 }

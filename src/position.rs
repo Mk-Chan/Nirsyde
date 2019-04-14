@@ -1,6 +1,6 @@
 use crate::constants::*;
 use crate::type_traits::Printable;
-use crate::types::{Bitboard, CastlingRights, Color, ColoredPiece, FenStage, Square};
+use crate::types::{Bitboard, CastlingRights, Color, ColoredPiece, FenStage, Move, PieceType, Square};
 
 #[derive(Copy, Clone)]
 pub struct Position {
@@ -37,8 +37,8 @@ impl From<&String> for Position {
                         curr_square -= Square(16);
                     } else {
                         let ColoredPiece(piece_type, color) = ColoredPiece::from(&ch);
-                        position.piece_types[piece_type.0 as usize] |= Bitboard::from_shift(curr_square.0);
-                        position.colors[color.0 as usize] |= Bitboard::from_shift(curr_square.0);
+                        position.piece_types[piece_type.0 as usize] |= Bitboard::from(&curr_square);
+                        position.colors[color.0 as usize] |= Bitboard::from(&curr_square);
                         curr_square += Square(1);
                     }
                 }
@@ -87,12 +87,101 @@ impl Position {
         }
 
         self.colors.swap(WHITE.0 as usize, BLACK.0 as usize);
+
+        if self.enpassant_sq != SQUARE_INVALID {
+            self.enpassant_sq.0 ^= 56;
+        }
+
+        let tmp_cr = (self.castling_rights.0 & 3) << 2;
+        self.castling_rights.0 >>= 2;
+        self.castling_rights.0 ^= tmp_cr;
+
+        self.side_to_move = !self.side_to_move;
     }
 
     pub fn flipped(&self) -> Position {
-        let mut pos_copy = (*self).clone();
-        pos_copy.flip();
-        pos_copy
+        let mut pos = self.clone();
+        pos.flip();
+        pos
+    }
+
+    pub fn make_move(&self, m: &Move) -> Position {
+        let mut pos = self.clone();
+        let from_sq = m.from_square();
+        let to_sq = m.to_square();
+        let moving_pt = pos.piece_type_on(&from_sq);
+
+        pos.castling_rights.spoil(CastlingRights(CASTLING_SPOILERS[from_sq.0 as usize]));
+        pos.castling_rights.spoil(CastlingRights(CASTLING_SPOILERS[to_sq.0 as usize]));
+
+        if moving_pt == PAWN {
+            pos.halfmoves = 0;
+        }
+
+        if m.is_move_type(MOVE_NORMAL) {
+            pos.move_piece(&from_sq, &to_sq, &moving_pt, &US);
+        } else if m.is_move_type(MOVE_CAPTURE) {
+            let captured_pt = pos.piece_type_on(&to_sq);
+            pos.toggle_piece(&to_sq, &captured_pt, &THEM);
+            pos.move_piece(&from_sq, &to_sq, &moving_pt, &US);
+            pos.halfmoves = 0;
+        } else if m.is_move_type(MOVE_DOUBLE_PUSH) {
+            pos.move_piece(&from_sq, &to_sq, &moving_pt, &US);
+            pos.enpassant_sq = to_sq - Square(8);
+        } else if m.is_move_type(MOVE_ENPASSANT) {
+            pos.move_piece(&from_sq, &to_sq, &moving_pt, &US);
+            let ep_sq = pos.enpassant_sq;
+            pos.toggle_piece(&ep_sq, &PAWN, &THEM);
+        } else if m.is_move_type(MOVE_CASTLING) {
+            let (rfrom_sq, rto_sq) = match to_sq {
+                C1 => (A1, D1),
+                G1 => (H1, F1),
+                _ => panic!("Unknown castling to square"),
+            };
+            pos.toggle_piece(&rfrom_sq, &ROOK, &US);
+            pos.toggle_piece(&from_sq, &KING, &US);
+            pos.toggle_piece(&rto_sq, &ROOK, &US);
+            pos.toggle_piece(&to_sq, &KING, &US);
+        } else if m.is_move_type(MOVE_PROM_CAP) {
+            let captured_pt = pos.piece_type_on(&to_sq);
+            let prom_type = m.promotion_type();
+            pos.toggle_piece(&to_sq, &captured_pt, &THEM);
+            pos.toggle_piece(&from_sq, &PAWN, &US);
+            pos.toggle_piece(&to_sq, &prom_type, &US);
+        } else if m.is_move_type(MOVE_PROMOTION) {
+            let prom_type = m.promotion_type();
+            pos.toggle_piece(&from_sq, &PAWN, &US);
+            pos.toggle_piece(&to_sq, &prom_type, &US);
+        }
+
+        if !m.is_move_type(MOVE_DOUBLE_PUSH) {
+            pos.enpassant_sq = SQUARE_INVALID;
+        }
+
+        pos.flip();
+        pos
+    }
+
+    pub fn piece_type_on(&self, sq: &Square) -> PieceType {
+        let sq_bb = Bitboard::from(sq);
+        for pt in PIECE_TYPES.iter() {
+            if self.piece_types[pt.0 as usize] & sq_bb != Bitboard(0) {
+                return *pt;
+            }
+        }
+        PIECE_NONE
+    }
+
+    fn move_piece(&mut self, from: &Square, to: &Square, pt: &PieceType, color: &Color) {
+        let from_to_mask = Bitboard::from(from) ^ Bitboard::from(to);
+        self.colors[color.0 as usize] ^= from_to_mask;
+        self.piece_types[pt.0 as usize] ^= from_to_mask;
+    }
+
+    fn toggle_piece(&mut self, sq: &Square, pt: &PieceType, color: &Color) {
+        let toggle_mask = Bitboard::from(sq);
+        self.colors[color.0 as usize] ^= toggle_mask;
+        self.piece_types[pt.0 as usize] ^= toggle_mask;
     }
 
     pub fn print_parts(&self) {

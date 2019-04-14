@@ -1,4 +1,4 @@
-use crate::constants::{MOVE_PROM_CAP, MOVE_ENPASSANT, MOVE_CAPTURE, MOVE_NORMAL, MOVE_PROMOTION, MOVE_CASTLING, MOVE_DOUBLE_PUSH, CAP_SHIFT, PROM_SHIFT};
+use crate::constants::{CAP_SHIFT, MOVE_CAPTURE, MOVE_CASTLING, MOVE_DOUBLE_PUSH, MOVE_ENPASSANT, MOVE_NORMAL, MOVE_PROM_CAP, MOVE_PROMOTION, PROM_SHIFT};
 
 #[derive(Eq, PartialEq, Copy, Clone)]
 pub struct Rank(pub u8);
@@ -44,31 +44,31 @@ pub enum FenStage {
 }
 
 impl Move {
-    pub fn normal(from: Square, to: Square) -> Move {
+    pub fn normal(from: &Square, to: &Square) -> Move {
         Move((from.0 as u32) | ((to.0 as u32) << 6) | MOVE_NORMAL)
     }
 
-    pub fn capture(from: Square, to: Square, cap_type: u32) -> Move {
+    pub fn capture(from: &Square, to: &Square, cap_type: u32) -> Move {
         Move((from.0 as u32) | ((to.0 as u32) << 6) | MOVE_CAPTURE | cap_type)
     }
 
-    pub fn promotion(from: Square, to: Square, prom_type: u32, cap_type: u32) -> Move {
+    pub fn promotion(from: &Square, to: &Square, prom_type: u32, cap_type: u32) -> Move {
         Move((from.0 as u32) | ((to.0 as u32) << 6) | MOVE_PROMOTION | prom_type)
     }
 
-    pub fn double_push(from: Square, to: Square) -> Move {
+    pub fn double_push(from: &Square, to: &Square) -> Move {
         Move((from.0 as u32) | ((to.0 as u32) << 6) | MOVE_DOUBLE_PUSH)
     }
 
-    pub fn castle(from: Square, to: Square) -> Move {
+    pub fn castle(from: &Square, to: &Square) -> Move {
         Move((from.0 as u32) | ((to.0 as u32) << 6) | MOVE_CASTLING)
     }
 
-    pub fn promotion_capture(from: Square, to: Square, prom_type: u32, cap_type: u32) -> Move {
+    pub fn promotion_capture(from: &Square, to: &Square, prom_type: u32, cap_type: u32) -> Move {
         Move((from.0 as u32) | ((to.0 as u32) << 6) | MOVE_PROM_CAP | prom_type | cap_type)
     }
 
-    pub fn enpassant(from: Square, to: Square) -> Move {
+    pub fn enpassant(from: &Square, to: &Square) -> Move {
         Move((from.0 as u32) | ((to.0 as u32) << 6) | MOVE_ENPASSANT)
     }
 
@@ -94,11 +94,6 @@ impl Move {
 }
 
 impl Bitboard {
-    pub fn from_shift(shift: u8) -> Bitboard {
-        debug_assert!(shift < 64);
-        Bitboard((1 as u64) << shift)
-    }
-
     pub fn swap_bytes(&self) -> Bitboard {
         Bitboard(self.0.swap_bytes())
     }
@@ -109,7 +104,7 @@ impl Bitboard {
 }
 
 impl Square {
-    pub fn new(file: File, rank: Rank) -> Self {
+    pub fn new(file: &File, rank: &Rank) -> Self {
         Square(file.0 + (rank.0 << 3))
     }
 
@@ -125,5 +120,9 @@ impl Square {
 impl CastlingRights {
     pub fn allows(&self, cr: CastlingRights) -> bool {
         self.0 & cr.0 != 0
+    }
+
+    pub fn spoil(&mut self, cr: CastlingRights) {
+        self.0 &= cr.0;
     }
 }
